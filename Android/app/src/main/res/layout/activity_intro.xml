@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="#fff"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".IntroActivity">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/upload"
+        android:text="Report missing"
+        android:textSize="20sp"
+        android:textColor="#ffffff"
+        android:textAllCaps="false"
+        android:layout_margin="20dp"
+        android:elevation="4dp"
+        android:background="@drawable/report_button_ripple"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/check"
+        android:text="Check"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:textAllCaps="false"
+        android:layout_margin="20dp"
+        android:elevation="4dp"
+        android:background="@drawable/check_button_ripple"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+</LinearLayout>
