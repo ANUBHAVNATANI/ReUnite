@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.util.Log;
-import android.widget.LinearLayout;
 
 import com.hacks.reunite.Repository.UploadRepository;
 
@@ -18,6 +16,8 @@ public class MainViewModel extends ViewModel {
     private UploadRepository uploadRepository;
     private MutableLiveData<Boolean> showLoading = new MutableLiveData<>();
     private MutableLiveData<Integer> predict = new MutableLiveData<>();
+    private MutableLiveData<Integer> detectedId = new MutableLiveData<>();
+    private String data;
 
     public void init(){
         if (!isStarted){
@@ -35,14 +35,19 @@ public class MainViewModel extends ViewModel {
         return predict;
     }
 
+    public LiveData<Integer> getDetectedId(){
+        return detectedId;
+    }
+
+    public void retryCheck(){
+        uploadRepository.uploadImage(data, showLoading, predict, detectedId);
+    }
+
     public void upload(Bitmap bitmap){
         int[] intArray = new int[10000];
         bitmap = scaleBitmap(bitmap, 100, 100);
         bitmap.getPixels(intArray, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
 
-//        float[] floatValues = new float[100 * 100];
-//        String[] str = new String[100];
-//        List<List<Float>> pixelValues = new ArrayList<>();
         float[] floatArray = new float[10000];
         for(int i = 0; i < 10000; i++){
             floatArray[i] = convertToGreyScale(intArray[i]);
@@ -66,8 +71,8 @@ public class MainViewModel extends ViewModel {
         }
 
         stringBuilder.append("]");
-        String output = stringBuilder.toString();
-        uploadRepository.uploadImage(output, showLoading, predict);
+        data = stringBuilder.toString();
+        uploadRepository.uploadImage(data, showLoading, predict, detectedId);
         bitmap.recycle();
     }
 

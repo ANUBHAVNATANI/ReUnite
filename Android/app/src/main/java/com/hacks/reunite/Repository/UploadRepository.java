@@ -39,7 +39,7 @@ public class UploadRepository {
         uploadInterface = retrofit.create(RetrofitInterface.class);
     }
 
-    public void uploadImage(String input, MutableLiveData<Boolean> showLoading, MutableLiveData<Integer> predict){
+    public void uploadImage(String input, MutableLiveData<Boolean> showLoading, MutableLiveData<Integer> predict, MutableLiveData<Integer> detectedId){
         showLoading.setValue(true);
         Log.d(TAG, "Starting upload...");
         uploadInterface.postImage(input).enqueue(new Callback<JsonElement>() {
@@ -50,14 +50,17 @@ public class UploadRepository {
                     try {
                         JSONObject reader = new JSONObject(jsonString);
                         int prediction = (int) reader.get("prediction");
+                        int id = (int) reader.get("id");
                         Log.d(TAG, "Prediction = " + prediction);
                         predict.setValue(prediction);
+                        detectedId.setValue(id);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     Log.d(TAG, "Response successful= " + jsonString);
                 }else{
                     Log.d(TAG, "Upload1 failed...");
+                    predict.setValue(null);
                 }
                 showLoading.setValue(false);
             }
@@ -67,6 +70,7 @@ public class UploadRepository {
                 showLoading.setValue(false);
                 t.printStackTrace();
                 Log.d(TAG, "Upload failed...");
+                predict.setValue(null);
             }
         });
     }

@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProviders;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
@@ -30,7 +29,6 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
 import com.hacks.reunite.ViewModel.MainViewModel;
 
 import java.util.Collections;
@@ -92,8 +90,29 @@ public class CheckActivity extends AppCompatActivity {
             if (prediction != null) {
                 showResults(prediction);
                 Log.d(TAG, "Prediction = " + prediction);
+            }else{
+                showNetworkError();
             }
         });
+
+        mainViewModel.getDetectedId().observe(this, detectedId->{
+            if (detectedId != null) {
+                retrieveDataFromFirebase(detectedId);
+                Toast.makeText(this, "Id = " + detectedId, Toast.LENGTH_SHORT);
+            }
+        });
+    }
+
+    private void showNetworkError(){
+        new AlertDialog.Builder(this)
+                .setTitle("Network error")
+                .setMessage("Please make sure you are connected to the internet and retry")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    mainViewModel.retryCheck();
+                })
+                .setNegativeButton("Cancel", null)
+                .setCancelable(false)
+                .show();
     }
 
     private void showResults(int prediction){
@@ -119,6 +138,10 @@ public class CheckActivity extends AppCompatActivity {
             dialog.dismiss();
     }
 
+    private void retrieveDataFromFirebase(int id){
+        //Here we use the id retrieved from the model to get the probable missing child's data
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -130,12 +153,6 @@ public class CheckActivity extends AppCompatActivity {
         } else {
             textureView.setSurfaceTextureListener(surfaceTextureListener);
         }
-
-//        databaseProfiles = FirebaseDatabase.getInstance().getReference("profiles");
-//        for (int i = 0; i < 3; i++){
-//            String id = databaseProfiles.push().getKey();
-//            databaseProfiles.child(id).setValue(profiles[i]);
-//        }
     }
 
     private void setUpStateCallback(){
